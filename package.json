@@ -1,0 +1,25 @@
+{
+  "name": "process-monitor",
+  "version": "1.0.0",
+  "description": "Process monitor | Tungsten Testing Task",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexander2555/process-monitor-js.git"
+  },
+  "keywords": [
+    "unix",
+    "process",
+    "monitor",
+    "javascript",
+    "nodejs"
+  ],
+  "author": "Alexander Mamontov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
