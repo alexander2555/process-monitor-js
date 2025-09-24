@@ -5,28 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Process Monitor JS</title>
 
-    <script defer src="pmv.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+
+    <script defer src="pmv.js" type="module"></script>
   </head>
   <body>
-    <div class="header">
+    <header>
       <h1>Process Monitor</h1>
-      <button class="refresh-btn" onclick="loadProcesses()">Refresh</button>
-      <span id="last-update"></span>
-    </div>
+      <label for="search-input" class="hide-on-error"
+        >Process search:&nbsp;
+        <input type="text" id="search-input" placeholder="Command name..." />
+      </label>
+    </header>
 
-    <table id="process-table">
-      <thead>
-        <tr>
-          <th>PID</th>
-          <th>User</th>
-          <th>CPU %</th>
-          <th>Memory %</th>
-          <th>Command</th>
-        </tr>
-      </thead>
-      <tbody id="process-list"></tbody>
-    </table>
+    <main>
+      <table id="process-table">
+        <thead>
+          <tr>
+            <th>PID</th>
+            <th>User</th>
+            <th>CPU %</th>
+            <th>Memory %</th>
+            <th>Command</th>
+          </tr>
+        </thead>
+        <tbody id="process-list"></tbody>
+      </table>
+      <p id="error-message"></p>
+      <div id="pagination-controls" class="hide-on-error"></div>
+      <div id="total-processes" class="hide-on-error"></div>
+      <button id="refresh-btn">Refresh</button>
+      <span id="last-update" class="hide-on-error"></span>
+    </main>
 
-    <footer>Process Monitor JS</footer>
+    <footer>&copy; Process Monitor JS</footer>
   </body>
 </html>
