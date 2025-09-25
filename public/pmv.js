@@ -5,18 +5,21 @@ const pagination = new Pagination()
 
 /**
  * Fetch and display the list of processes from the server
+ * @returns {Promise<void>}
+ *
  */
 async function loadProcesses() {
   const tbody = document.getElementById('process-list')
   const totalInfo = document.getElementById('total-processes')
   const errMessage = document.getElementById('error-message')
   const searchInput = document.getElementById('search-input')
+  // Elements to hide when error occurs
   const hideOnErrorElements = [
     ...document.getElementsByClassName('hide-on-error'),
   ]
 
   try {
-    // Clear previous interval if exists
+    // Clear previous interval if exists before fetching new data
     if (loadProcessesInteval) {
       clearInterval(loadProcessesInteval)
       loadProcessesInteval = null
@@ -42,10 +45,6 @@ async function loadProcesses() {
     //   })
     // }
     // !
-
-    // If fetch was successful, setting interval to auto-refresh processes
-    if (!loadProcessesInteval)
-      loadProcessesInteval = setInterval(loadProcesses, UPDATE_INTERVAL)
 
     // Filter processes based on search input
     const filterPhrase = searchInput.value.trim().toLowerCase()
@@ -76,6 +75,10 @@ async function loadProcesses() {
 
     // Hide error message
     errMessage.style.display = 'none'
+
+    // If fetch was successful, setting interval to auto-refresh processes
+    if (!loadProcessesInteval)
+      loadProcessesInteval = setInterval(loadProcesses, UPDATE_INTERVAL)
   } catch (err) {
     tbody.innerHTML = ''
 
@@ -91,6 +94,7 @@ async function loadProcesses() {
   }
 }
 
+// Refresh and filter controls listeners
 const refreshBtn = document.getElementById('refresh-btn')
 refreshBtn.addEventListener('click', loadProcesses)
 const searchInput = document.getElementById('search-input')
