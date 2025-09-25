@@ -5,8 +5,6 @@ const pagination = new Pagination()
 
 /**
  * Fetch and display the list of processes from the server
- * @returns {Promise<void>}
- *
  */
 async function loadProcesses() {
   const tbody = document.getElementById('process-list')
