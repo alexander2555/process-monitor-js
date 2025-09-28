@@ -121,7 +121,7 @@ class ProcessMonitor {
           cpuPrevTime: cpuCurrUsageTime, // Save current CPU usage time
           memory: +(parseInt(cols[4]) / this.totalMem).toFixed(2), // Mem Usage
           command: cols[0], // Process name
-          user: cols[6].replace(/[^\x20-\x7Eа-яА-ЯёЁ\\]/g, ''), //iconv.decode(Buffer.from(cols[6]), 'cp850').normalize(), // User
+          user: cols[6],
         }
       })
       .filter(Boolean)
