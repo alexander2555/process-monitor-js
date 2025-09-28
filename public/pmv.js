@@ -1,28 +1,70 @@
+const UPDATE_INTERVAL = 1000
+const DEBOUNCE_INTERVAL = UPDATE_INTERVAL / 2
+
 import { Pagination } from './pagination.js'
 
-const UPDATE_INTERVAL = 2500
 const pagination = new Pagination()
+
+const tbody = document.getElementById('process-list')
+const totalInfo = document.getElementById('total-processes')
+const errMessage = document.getElementById('error-message')
+const searchInput = document.getElementById('search-input')
+const refreshBtn = document.getElementById('refresh-btn')
+const loader = document.getElementById('loader')
+// Elements to hide when error occurs
+const hideOnErrorElements = [
+  ...document.getElementsByClassName('hide-on-error'),
+]
+
+const debounce = (fn, delay) => {
+  let ti = null
+  return function (...args) {
+    clearTimeout(ti)
+    ti = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
+
+const pageRender = (currentPageProcesses) => {
+  tbody.innerHTML = ''
+  currentPageProcesses.forEach((process) => {
+    const row = tbody.insertRow()
+    row.insertCell().textContent = process.pid
+    row.insertCell().textContent = process.user || 'N/A'
+    row.insertCell().textContent = process.cpu || '0'
+    row.insertCell().textContent = process.memory
+    row.insertCell().textContent = process.command.substring(0, 50)
+  })
+}
+
+const setHideContentStatus = (isHide) => {
+  if (isHide) hideOnErrorElements.forEach((el) => el.classList.add('hide'))
+  else hideOnErrorElements.forEach((el) => el.classList.remove('hide'))
+}
+
+const setPendingStatus = (isPending) => {
+  if (isPending) {
+    loader.style.display = 'block'
+    setHideContentStatus(true)
+    return
+  }
+  setHideContentStatus(false)
+  searchInput.focus()
+  loader.style.display = 'none'
+}
 
 /**
  * Fetch and display the list of processes from the server
  */
-async function loadProcesses() {
-  const tbody = document.getElementById('process-list')
-  const totalInfo = document.getElementById('total-processes')
-  const errMessage = document.getElementById('error-message')
-  const searchInput = document.getElementById('search-input')
-  // Elements to hide when error occurs
-  const hideOnErrorElements = [
-    ...document.getElementsByClassName('hide-on-error'),
-  ]
+async function loadProcesses(e) {
+  if (e?.target) setPendingStatus(true)
+
+  // Clear previous interval if exists before fetching new data
+  if (loadProcessesInteval) {
+    clearInterval(loadProcessesInteval)
+    loadProcessesInteval = null
+  }
 
   try {
-    // Clear previous interval if exists before fetching new data
-    if (loadProcessesInteval) {
-      clearInterval(loadProcessesInteval)
-      loadProcessesInteval = null
-    }
-
     // Fetch processes from server
     const response = await fetch('/api/processes')
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
@@ -53,17 +95,7 @@ async function loadProcesses() {
     }
 
     // Output processes table with pagination
-    pagination.renderPagination(processes, (currentPageProcesses) => {
-      tbody.innerHTML = ''
-      currentPageProcesses.forEach((process) => {
-        const row = tbody.insertRow()
-        row.insertCell().textContent = process.pid
-        row.insertCell().textContent = process.user
-        row.insertCell().textContent = process.cpu
-        row.insertCell().textContent = process.memory
-        row.insertCell().textContent = process.command.substring(0, 50)
-      })
-    })
+    pagination.renderPagination(processes, pageRender)
     totalInfo.textContent = processes.length
 
     // Update time show
@@ -73,6 +105,8 @@ async function loadProcesses() {
 
     // Hide error message
     errMessage.style.display = 'none'
+    // Hide loader & Show hiding elements
+    setPendingStatus(false)
 
     // If fetch was successful, setting interval to auto-refresh processes
     if (!loadProcessesInteval)
@@ -86,17 +120,19 @@ async function loadProcesses() {
       'Loading processes error! <br> Please <b>Refresh</b> later.'
     errMessage.style.display = 'block'
 
-    hideOnErrorElements.forEach((el) => {
-      el.style.display = 'none'
-    })
+    setHideContentStatus(true)
   }
 }
 
+// const thead = document.getElementById('process-list-head')
+// Set table header based on platform
+
 // Refresh and filter controls listeners
-const refreshBtn = document.getElementById('refresh-btn')
-refreshBtn.addEventListener('click', loadProcesses)
-const searchInput = document.getElementById('search-input')
-searchInput.addEventListener('input', loadProcesses)
+refreshBtn.addEventListener('click', debounce(loadProcesses, DEBOUNCE_INTERVAL))
+searchInput.addEventListener(
+  'input',
+  debounce(loadProcesses, DEBOUNCE_INTERVAL)
+)
 
 let loadProcessesInteval = null
 

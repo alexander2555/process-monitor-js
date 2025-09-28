@@ -30,7 +30,7 @@ export class Pagination {
   set Data(data = []) {
     this.data = data
     this.totalPages = Math.ceil(data.length / this.rowsPerPage)
-    this.setCurrentPageData()
+    this.Page = this.currentPage
   }
 
   // Set current page and update current page data rows
@@ -58,7 +58,7 @@ export class Pagination {
     // Initial call to render first page data
     onPageChange(this.currentPageData)
     // No need to render pagination controls if only one page
-    if (this.totalPages <= 1) return
+    if (this.totalPages < 2) return
     // Create pagination buttons
     for (let i = 1; i <= this.totalPages; i++) {
       const button = document.createElement('button')

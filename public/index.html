@@ -21,21 +21,25 @@
     <main>
       <table id="process-table">
         <thead>
-          <tr>
+          <tr id="process-list-head">
             <th>PID</th>
             <th>User</th>
             <th>CPU %</th>
             <th>Memory %</th>
-            <th>Command</th>
+            <th>Process</th>
           </tr>
         </thead>
-        <tbody id="process-list"></tbody>
+        <tbody id="process-list" class="hide-on-error"></tbody>
       </table>
+      <div id="loader">Pending...</div>
       <p id="error-message"></p>
       <div id="pagination-controls" class="hide-on-error"></div>
       <div id="total-processes" class="hide-on-error"></div>
-      <button id="refresh-btn">Refresh</button>
-      <span id="last-update" class="hide-on-error"></span>
+      <div>
+        <button id="refresh-btn">Refresh</button>
+        &nbsp;
+        <span id="last-update" class="hide-on-error"></span>
+      </div>
     </main>
 
     <footer>&copy; Process Monitor JS</footer>
